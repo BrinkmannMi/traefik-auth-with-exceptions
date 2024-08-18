@@ -3,8 +3,8 @@ type: middleware
 import: github.com/brinkmann-mi/traefik-auth-with-exceptions
 
 summary: |
-  "Traefik plugin for Basic Access Authentication with exceptions. "
-  "(e.g. exclude IPs or hosts)"
+  Traefik plugin for Basic Access Authentication with exceptions.
+  (e.g. exclude IPs or hosts)
 
 testData:
   authExtraTime: 300ms
