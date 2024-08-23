@@ -1,4 +1,4 @@
-module github.com/brinkmann-mi/traefik-auth-with-exceptions
+module github.com/BrinkmannMi/traefik-auth-with-exceptions
 
 go 1.22.4
 

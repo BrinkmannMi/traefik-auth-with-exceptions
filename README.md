@@ -1,4 +1,4 @@
-# Traefik Plugin: Auth With Exceptions
+# Traefik Plugin: Basic Auth With Exceptions
 
 With this Traefik Middleware Plugin you can create a basic auth and define certain exceptions.
 These can be IPs, IP ranges (CIDR) or hostnames. The host names are then resolved at definable intervals into IPs.

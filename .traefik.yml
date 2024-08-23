@@ -1,6 +1,6 @@
-displayName: Auth With Exceptions
+displayName: Basic Auth With Exceptions
 type: middleware
-import: github.com/brinkmann-mi/traefik-auth-with-exceptions
+import: github.com/BrinkmannMi/traefik-auth-with-exceptions
 
 summary: |
   Traefik plugin for Basic Access Authentication with exceptions.
