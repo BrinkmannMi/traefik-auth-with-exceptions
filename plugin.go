@@ -18,9 +18,11 @@ type BasicAuth struct {
 }
 
 type Exceptions struct {
-	IpList             []string `json:"ipList,omitempty"`
-	HostList           []string `json:"hostList,omitempty"`
-	HostUpdateInterval string   `json:"hostUpdateInterval,omitempty"`
+	IpList                      []string `json:"ipList,omitempty"`
+	HostList                    []string `json:"hostList,omitempty"`
+	HostUpdateInterval          string   `json:"hostUpdateInterval,omitempty"`
+	AllowForwardedHeadersFrom   []string `json:"allowForwardedHeadersFrom,omitempty"`
+	AllowForwardedHeader        string   `json:"allowForwardedHeader,omitempty"`
 }
 
 type Config struct {
@@ -44,7 +46,7 @@ type AuthWithExceptions struct {
 
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	fmt.Println("Plugin initializing...")
-
+  fmt.Printf("config: %+v\n", config)
 	// create exception checker
 	checker := NewExceptionChecker(config.Exceptions)
 
@@ -82,10 +84,13 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (p *AuthWithExceptions) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	fmt.Printf("Checking remote address: %s\n", req.RemoteAddr)
+
+	clientIp := p.checker.getRemoteAddr(req.RemoteAddr, strings.Split(req.Header.Get(p.checker.forwardHeader),",")[0])
+
+	fmt.Printf("Checking remote address: %s\n", clientIp)
 
 	reason := "exception"
-	trusted := p.checker.IsTrustedRemoteAddr(req.RemoteAddr)
+	trusted := p.checker.IsTrustedRemoteAddr(clientIp)
 
 	if !trusted {
 		user, password, ok := req.BasicAuth()

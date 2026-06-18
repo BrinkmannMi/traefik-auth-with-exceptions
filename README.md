@@ -24,6 +24,10 @@ http:
             hostList:
               - example.com
             hostUpdateInterval: 5m
+            allowForwardedHeader: X-Forwarded-For
+            allowForwardedHeadersFrom:
+              - 127.0.0.1
+              - 10.0.0.0/8
 ```
 
 * **authExtraTime** : extra time to slow down auth if using md5 or sha hashed passwords. (e.g. 1s, 300ms)
@@ -35,3 +39,5 @@ http:
   * **ipList** : List with IPs and CIDRs to exclude from basic auth
   * **hostList** : Hostnames to exclude from basic auth
   * **hostUpdateInterval** : Interval to update the IPs of hostList (e.g. 1h30m, 15m, 60s)
+  * **allowForwardedHeader**: Header contains client real ip, X-Forwarded-For by default
+  * **allowForwardedHeadersFrom**: List with IPs and CIDRs from where trusts the forwarded headers information

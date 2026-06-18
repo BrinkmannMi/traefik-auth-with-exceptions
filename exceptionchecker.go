@@ -9,6 +9,9 @@ import (
 type ExceptionChecker struct {
 	ipList             []net.IP
 	ipNetList          []*net.IPNet
+	forwardIpList      []net.IP
+	forwardIpNetList   []*net.IPNet
+	forwardHeader      string
 	hostList           []net.IP
 	hostLastUpdate     time.Time
 	hostUpdateInterval time.Duration
@@ -17,7 +20,11 @@ type ExceptionChecker struct {
 
 func NewExceptionChecker(config Exceptions) *ExceptionChecker {
 	ipList, ipNetList := parseIpList(config.IpList)
-
+	forwardIpList, forwardIpNetList := parseIpList(config.AllowForwardedHeadersFrom)
+  AllowForwardedHeader := "X-Forwarded-For"
+	if config.AllowForwardedHeader != "" {
+		AllowForwardedHeader = config.AllowForwardedHeader
+	}
 	hostUpdateInterval, err := time.ParseDuration(config.HostUpdateInterval)
 	if err != nil {
 		fmt.Printf("Error parsing hostUpdateInterval: %v (host updates are disabled)\n", err)
@@ -27,6 +34,9 @@ func NewExceptionChecker(config Exceptions) *ExceptionChecker {
 	ec := &ExceptionChecker{
 		ipList:             ipList,
 		ipNetList:          ipNetList,
+		forwardIpList:      forwardIpList,
+		forwardIpNetList:   forwardIpNetList,
+		forwardHeader:      AllowForwardedHeader,
 		hostList:           []net.IP{},
 		hostLastUpdate:     time.Time{},
 		hostUpdateInterval: hostUpdateInterval,
@@ -52,6 +62,32 @@ func (ec *ExceptionChecker) UpdateHosts() {
 	ec.hostLastUpdate = time.Now()
 }
 
+func (ec *ExceptionChecker) getRemoteAddr(addr string, forwardedFor string) string {
+
+	if forwardedFor == "" {
+		return addr
+	}
+
+	ipRemote := splitAddr(addr)
+	if ipRemote == nil {
+		return addr
+	}
+
+	for _, ip := range ec.forwardIpList {
+		if ip.Equal(ipRemote) {
+			return (forwardedFor+":0")
+		}
+	}
+
+	for _, ipNet := range ec.forwardIpNetList {
+		if ipNet.Contains(ipRemote) {
+			return (forwardedFor+":0")
+		}
+	}
+
+	return addr
+
+}
 func (ec *ExceptionChecker) IsTrustedRemoteAddr(addr string) bool {
 	ec.UpdateHosts()
 
