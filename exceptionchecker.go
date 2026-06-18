@@ -21,12 +21,9 @@ type ExceptionChecker struct {
 func NewExceptionChecker(config Exceptions) *ExceptionChecker {
 	ipList, ipNetList := parseIpList(config.IpList)
 	forwardIpList, forwardIpNetList := parseIpList(config.AllowForwardedHeadersFrom)
-
-	if config.AllowForwardedHeader == ""{
-		AllowForwardedHeader := "X-Forwarded-For"
-	}
-	else{
-		AllowForwardedHeader := config.AllowForwardedHeader
+  AllowForwardedHeader := "X-Forwarded-For"
+	if config.AllowForwardedHeader != "" {
+		AllowForwardedHeader = config.AllowForwardedHeader
 	}
 	hostUpdateInterval, err := time.ParseDuration(config.HostUpdateInterval)
 	if err != nil {
