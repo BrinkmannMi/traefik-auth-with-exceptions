@@ -26,7 +26,7 @@ func NewExceptionChecker(config Exceptions) *ExceptionChecker {
 		AllowForwardedHeader := "X-Forwarded-For"
 	}
 	else{
-		AllowForwardedHeader := config.AllowForwardedHeader?
+		AllowForwardedHeader := config.AllowForwardedHeader
 	}
 	hostUpdateInterval, err := time.ParseDuration(config.HostUpdateInterval)
 	if err != nil {
