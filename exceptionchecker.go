@@ -24,6 +24,7 @@ func NewExceptionChecker(config Exceptions) *ExceptionChecker {
 
 	if config.AllowForwardedHeader == ""{
 		AllowForwardedHeader := "X-Forwarded-For"
+	}
 	else{
 		AllowForwardedHeader := config.AllowForwardedHeader?
 	}
